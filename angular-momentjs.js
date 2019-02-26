@@ -1,6 +1,6 @@
 /*
   angular-momentjs - v0.2.2 
-  2015-07-10
+  2019-02-26
 */
 (function(window, angular, undefined) {
     angular.module("angular-moment", [ "gdi2290.moment" ]);
@@ -39,6 +39,7 @@
             var activeTimeout = null;
             var currentValue;
             var currentFormat;
+            var currentSuffix = true;
             function cancelTimer() {
                 if (activeTimeout) {
                     $timeout.cancel(activeTimeout);
@@ -46,7 +47,7 @@
                 }
             }
             function updateTime(momentInstance) {
-                element.text(momentInstance.fromNow());
+                element.text(momentInstance.fromNow(!currentSuffix));
                 var howOld;
                 if ($moment.then) {
                     $moment().then(function(moment) {
@@ -91,6 +92,12 @@
                 }
                 currentValue = value;
                 updateMoment();
+            });
+            scope.$watch(attrs.amSuffix, function(suffix) {
+                currentSuffix = !!suffix;
+                if (currentValue) {
+                    updateMoment();
+                }
             });
             attrs.$observe("amFormat", function(format) {
                 currentFormat = format;
